@@ -20,6 +20,9 @@ setup(
     description="QIIME2 implementation of the mOTU tool.",
     license='BSD-3-Clause',
     url="https://qiime2.org",
+    install_requires=[
+        'motu-profiler',
+    ],
     entry_points={
         'qiime2.plugins':
         ['q2-motus=q2_motus.plugin_setup:plugin']

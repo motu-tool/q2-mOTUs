@@ -39,4 +39,4 @@ qiime feature-table summarize \
 ```
 To get summary of your feature table.
 
-![image](expected_output/table-summary.png)
+![image](example_output/table-summary.png)

@@ -4,6 +4,7 @@ from qiime2.plugin import (Int, Range, Str, Bool, Choices, Plugin, Citations)
 
 from q2_motus._taxonomy import classify
 from q2_types.sample_data import SampleData
+from q2_types.feature_data import FeatureData, Taxonomy
 from q2_types.per_sample_sequences import SequencesWithQuality, PairedEndSequencesWithQuality
 from q2_types.feature_table import FeatureTable, Frequency
 
@@ -24,18 +25,19 @@ plugin = Plugin(
 plugin.methods.register_function(
     function=classify,
     inputs={"samples": SampleData[SequencesWithQuality | PairedEndSequencesWithQuality]},
-    outputs=[("table", FeatureTable[Frequency]), 
-             ("taxonomy", FeatureData[Taxonomy])],
+    outputs=[
+        ("table", FeatureTable[Frequency]), 
+        ("taxonomy", FeatureData[Taxonomy])
+        ],
     parameters={"threads": Int % Range(1, None),
                 "min_alen": Int % Range(1, None),
                 "marker_gene_cutoff": Int % Range(1, 10),
                 "mode": Str % Choices(["base.coverage", "insert.raw_counts", "insert.scaled_counts"]),
                 "reference_genomes": Bool,
-                "ncbi_taxonomy": Bool,
-                "full_taxonomy": Bool,
-                "taxonomy_level": Str % Choices(["mOTU", "genus", "family", "order", "class", "phylum", "kingdom"])},
+                "ncbi_taxonomy": Bool},
     name="mOTU paired end profiler",
     description="Executes a taxonomical classification of paired-end sample.",
+    citations=[citations["Milanese2019-gw"]],
     input_descriptions={"samples": "The paired-end samples to be classified."},
     parameter_descriptions={"threads": "The number of threads to use.",
                             "min_alen": "Minimum alignment length.",
@@ -46,6 +48,7 @@ plugin.methods.register_function(
                                     "insert.raw_counts measures the number of reads that map to the gene."
                                     "insert.scaled_counts measures the number of reads that map to the gene, scaled by the length of the gene.",
                             "reference_genomes": "Use only species with reference genomes (ref-mOTUs).",
-                            "ncbi_taxonomy": "Use NCBI taxonomy instead of mOTU.",
-                            "full_taxonomy": "Use full taxonomy.",
-                            "taxonomy_level": "The taxonomy level to use for profiling."})
+                            "ncbi_taxonomy": "Use NCBI taxonomy instead of mOTU."},
+    output_descriptions={"table": "The feature table with counts of marker genes in samples.",
+                         "taxonomy": "The taxonomy."}
+)

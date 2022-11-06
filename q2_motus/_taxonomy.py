@@ -2,7 +2,7 @@ import os
 import subprocess
 import tempfile
 from functools import partial
-from typing import List, NamedTuple, Union, Literal
+from typing import List, NamedTuple, Union, Literal, Tuple
 
 import numpy as np
 import pandas as pd
@@ -46,16 +46,14 @@ def preprocess_manifest(data: Union[SingleLanePerSampleSingleEndFastqDirFmt,
 
 
 def profile_sample(
+    row: NamedTuple,
     output_directory: str, 
     threads: int, 
     min_alen: int,
     marker_gene_cutoff: int, 
     mode: Literal["base.coverage", "insert.raw_counts", "insert.scaled_counts"],
     reference_genomes: bool,
-    ncbi_taxonomy: bool,
-    full_taxonomy: bool,
-    taxonomy_level: Literal["mOTU", "genus", "family", "order", "class", "phylum", "kingdom"],
-    row: NamedTuple) -> List[str]: 
+    ncbi_taxonomy: bool) -> List[str]: 
 
     """Run motu-profiler on a single sample."""
 
@@ -77,8 +75,7 @@ def profile_sample(
                 "-l", str(min_alen),
                 "-g", str(marker_gene_cutoff),
                 "-y", str(mode),
-                "-k", str(taxonomy_level),
-                "-c"])
+                "-c", "-q"])
 
     if reference_genomes:
         cmd.extend(["-e"])
@@ -86,21 +83,27 @@ def profile_sample(
     if ncbi_taxonomy:
         cmd.extend(["-p"])
 
-    if full_taxonomy:
-        cmd.extend(["-q"])
-
     p = _run_command(cmd)
 
     return cmd
 
 
-def load_table(tab_fp: str) -> pd.DataFrame:
-    '''Converts merged mOTU table to biom feature table'''
+def load_table_extract_tax(tab_fp: str) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    '''Converts merged mOTU table to feature table and taxonomy'''
     df = pd.read_csv(tab_fp, sep='\t', index_col=0, skiprows=2)
     df = df.replace({0 : np.nan})
+    df.index = df.index.rename("Feature ID")
+    df = df.rename(columns={"consensus_taxonomy": "Taxon"})
+    id_col = "Feature ID"
+    taxonomy_col = "Taxon"
     # dropping unassigned species
-    tab = df.dropna(axis = 0, thresh = df.shape[1] - 1).fillna(0).T
-    return tab
+    df = df.dropna(axis = 0, thresh = df.shape[1] - 1)
+    # getting taxonomy
+    tax = df.reset_index()[[id_col, taxonomy_col]].copy().set_index(id_col)
+    tax[taxonomy_col] = tax[taxonomy_col].str.replace("|", "; ", regex=True)
+    df = df.drop(columns=[taxonomy_col])
+    tab = df.fillna(0).T
+    return tab, tax
 
 
 def classify(
@@ -111,10 +114,8 @@ def classify(
     marker_gene_cutoff: int = 3,
     mode: Literal["base.coverage", "insert.raw_counts", "insert.scaled_counts"] = "insert.scaled_counts",
     reference_genomes: bool = False,
-    ncbi_taxonomy: bool = False,
-    full_taxonomy: bool = False,
-    taxonomy_level: Literal["mOTU", "genus", "family", "order", "class", "phylum", "kingdom"] = "mOTU",
-    ) -> pd.DataFrame:
+    ncbi_taxonomy: bool = False
+    ) -> (pd.DataFrame, pd.DataFrame):
     """Run motu-profiler on paired-end samples data.
 
     Parameters
@@ -130,13 +131,11 @@ def classify(
 
     with tempfile.TemporaryDirectory() as temp_dir:
         profile_dir = os.path.join(temp_dir, "profiles")
-        # consistent output and number of threads
-        profile_sample_partial = partial(profile_sample, profile_dir, threads, min_alen, marker_gene_cutoff, mode,
-                                         reference_genomes, ncbi_taxonomy, full_taxonomy, taxonomy_level)
+        os.makedirs(profile_dir, exist_ok=True)
         # iterate over samples
         for row in id_to_fps.itertuples():
-            os.makedirs(profile_dir, exist_ok=True)
-            profile_sample_partial(row)
+            profile_sample(row, profile_dir, threads, min_alen, marker_gene_cutoff, mode,
+                           reference_genomes, ncbi_taxonomy)
         
         # merge profiles
         taxatable = os.path.join(temp_dir, "motus.merged")
@@ -144,4 +143,5 @@ def classify(
         _run_command(cmd)
 
         # output merged profiles as feature table
-        return load_table(taxatable)
+        tab, tax = load_table_extract_tax(taxatable)
+        return tab, tax

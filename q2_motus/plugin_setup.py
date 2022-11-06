@@ -2,7 +2,7 @@ import q2_motus
 
 from qiime2.plugin import (Int, Range, Str, Bool, Choices, Plugin, Citations) 
 
-from q2_motus._taxonomy import classify
+from q2_motus._taxonomy import profile
 from q2_types.sample_data import SampleData
 from q2_types.feature_data import FeatureData, Taxonomy
 from q2_types.per_sample_sequences import SequencesWithQuality, PairedEndSequencesWithQuality
@@ -23,7 +23,7 @@ plugin = Plugin(
 
 
 plugin.methods.register_function(
-    function=classify,
+    function=profile,
     inputs={"samples": SampleData[SequencesWithQuality | PairedEndSequencesWithQuality]},
     outputs=[
         ("table", FeatureTable[Frequency]), 
@@ -40,7 +40,7 @@ plugin.methods.register_function(
     description="Executes a taxonomical classification of paired-end sample.",
     citations=[citations["Milanese2019-gw"]],
     input_descriptions={"samples": "The paired-end samples to be classified."},
-    parameter_descriptions={"threads": "The number of threads to use.",
+    parameter_descriptions={"threads": "The number of threads to use. We suggest using 4-8 threads.",
                             "min_alen": "Minimum alignment length.",
                             "marker_gene_cutoff": "Minimum number of marker genes to be considered a species." 
                                                   "Ranges from 1 to 10. A higher value increases precision (and lowers recall)",

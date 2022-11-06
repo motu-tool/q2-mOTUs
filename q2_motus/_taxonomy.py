@@ -2,15 +2,14 @@ import os
 import subprocess
 import tempfile
 from functools import partial
-from typing import List, NamedTuple, Union, Literal, Tuple
+from multiprocessing import Pool
+from typing import List, Literal, NamedTuple, Tuple, Union
 
 import numpy as np
 import pandas as pd
 from q2_types.per_sample_sequences import (
     SingleLanePerSamplePairedEndFastqDirFmt,
     SingleLanePerSampleSingleEndFastqDirFmt)
-
-from multiprocessing import Pool
 
 
 def _run_command(cmd: List[str], verbose: bool = False) -> None:
@@ -90,25 +89,36 @@ def profile_sample(
     return cmd
 
 
-def load_table_extract_tax(tab_fp: str) -> Tuple[pd.DataFrame, pd.DataFrame]:
+def load_table_extract_tax(tab_fp: str, ncbi: bool = False) -> Tuple[pd.DataFrame, pd.DataFrame]:
     '''Converts merged mOTU table to feature table and taxonomy'''
     df = pd.read_csv(tab_fp, sep='\t', index_col=0, skiprows=2)
     df = df.replace({0 : np.nan})
     df.index = df.index.rename("Feature ID")
-    df = df.rename(columns={"consensus_taxonomy": "Taxon"})
+    if ncbi:
+        df = df.rename(columns={"NCBI_tax_id" : "Taxon"})
+    else:
+        df = df.rename(columns={"consensus_taxonomy": "Taxon"})
+
     id_col = "Feature ID"
     taxonomy_col = "Taxon"
-    # dropping unassigned species
-    df = df.dropna(axis = 0, thresh = df.shape[1] - 1)
+
     # getting taxonomy
     tax = df.reset_index()[[id_col, taxonomy_col]].copy().set_index(id_col)
     tax[taxonomy_col] = tax[taxonomy_col].str.replace("|", "; ", regex=True)
-    df = df.drop(columns=[taxonomy_col])
-    tab = df.fillna(0).T
+
+    if ncbi:
+        df = df.drop(columns = [taxonomy_col, "consensus_taxonomy"])
+    else:
+        df = df.drop(columns=[taxonomy_col])
+    
+    tab = df.dropna(axis=0, thresh=df.shape[1])
+    tab = tab.fillna(0).T
+    tax = tax[tax.index.isin(tab.columns)]
+    
     return tab, tax
 
 
-def classify(
+def profile(
     samples: Union[SingleLanePerSamplePairedEndFastqDirFmt, 
                    SingleLanePerSampleSingleEndFastqDirFmt],
     threads: int, 
@@ -149,5 +159,5 @@ def classify(
         _run_command(cmd)
 
         # output merged profiles as feature table
-        tab, tax = load_table_extract_tax(taxatable)
+        tab, tax = load_table_extract_tax(taxatable, ncbi_taxonomy)
         return tab, tax

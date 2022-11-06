@@ -20,12 +20,14 @@ make install
 ```
 
 # Usage
+
+The plugin executes one function - assigns taxonomy to metagenomic reads. Therefore, there is a single workflow.
 ## 1. Import your data to QIIME 2
 Import your metagenomic sequencing data in `.fastq` format (don't forget to preprocess your data) to QIIME2 as a `SampleData` semantic type using manifest file. See examples in `q2_motus/test/data`.
 ## 2. Run mOTU-tool
 Whether you have a single sample or multiple samples, you can run mOTU-tool using the following command:
 ```
-qiime motus classify \
+qiime motus profile \
     --i-samples paired-end.qza \
     --o-taxonomy paired-end-taxonomy.qza \
     --o-table paired-end-classified.qza \
@@ -48,7 +50,7 @@ To get summary of your feature table.
 
 ![image](example_output/table-summary.png)
 
-Or create taxa barplot:
+Or create a taxa barplot:
 ```
 qiime taxa barplot \
     --i-table paired-end-classified.qza \

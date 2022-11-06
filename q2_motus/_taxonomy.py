@@ -10,6 +10,8 @@ from q2_types.per_sample_sequences import (
     SingleLanePerSamplePairedEndFastqDirFmt,
     SingleLanePerSampleSingleEndFastqDirFmt)
 
+from multiprocessing import Pool
+
 
 def _run_command(cmd: List[str], verbose: bool = False) -> None:
     """Run a command in a subprocess.
@@ -28,7 +30,7 @@ def _run_command(cmd: List[str], verbose: bool = False) -> None:
     """
     if verbose:
         print(cmd)
-    subprocess.run(cmd, check=True)
+    subprocess.call(cmd)
 
 
 def preprocess_manifest(data: Union[SingleLanePerSampleSingleEndFastqDirFmt,
@@ -49,15 +51,15 @@ def profile_sample(
     row: NamedTuple,
     output_directory: str, 
     threads: int, 
-    min_alen: int,
-    marker_gene_cutoff: int, 
-    mode: Literal["base.coverage", "insert.raw_counts", "insert.scaled_counts"],
-    reference_genomes: bool,
-    ncbi_taxonomy: bool) -> List[str]: 
+    min_alen: int = 75,
+    marker_gene_cutoff: int = 3, 
+    mode: Literal["base.coverage", "insert.raw_counts", "insert.scaled_counts"] = "insert.scaled_counts",
+    reference_genomes: bool = False,
+    ncbi_taxonomy: bool = False) -> List[str]: 
 
     """Run motu-profiler on a single sample."""
 
-    sample_name = row.Index
+    sample_name = row[0]
     reads = row[1:]
 
     cmd = ["motus", "profile"]
@@ -114,7 +116,8 @@ def classify(
     marker_gene_cutoff: int = 3,
     mode: Literal["base.coverage", "insert.raw_counts", "insert.scaled_counts"] = "insert.scaled_counts",
     reference_genomes: bool = False,
-    ncbi_taxonomy: bool = False
+    ncbi_taxonomy: bool = False,
+    jobs: int = 1
     ) -> (pd.DataFrame, pd.DataFrame):
     """Run motu-profiler on paired-end samples data.
 
@@ -132,10 +135,13 @@ def classify(
     with tempfile.TemporaryDirectory() as temp_dir:
         profile_dir = os.path.join(temp_dir, "profiles")
         os.makedirs(profile_dir, exist_ok=True)
-        # iterate over samples
-        for row in id_to_fps.itertuples():
-            profile_sample(row, profile_dir, threads, min_alen, marker_gene_cutoff, mode,
-                           reference_genomes, ncbi_taxonomy)
+        reads_tuples = id_to_fps.itertuples(name=None)
+        func = partial(profile_sample, output_directory=profile_dir, threads=threads, 
+                       min_alen=min_alen, marker_gene_cutoff=marker_gene_cutoff, mode=mode, 
+                       reference_genomes=reference_genomes, ncbi_taxonomy=ncbi_taxonomy)
+        
+        with Pool(jobs) as pool:
+            pool.map(func, reads_tuples)
         
         # merge profiles
         taxatable = os.path.join(temp_dir, "motus.merged")

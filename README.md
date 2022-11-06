@@ -29,7 +29,8 @@ qiime motus classify \
     --i-samples paired-end.qza \
     --o-taxonomy paired-end-taxonomy.qza \
     --o-table paired-end-classified.qza \
-    --p-threads 4
+    --p-threads 4 \
+    --p-jobs 2
 ```
 
 ## Output 
@@ -76,5 +77,5 @@ If you use this tool, please cite the following paper:
   number    = {1},
   pages     = {1014},
   month     = {mar},
-  year      = {2019},@
+  year      = {2019},
 }

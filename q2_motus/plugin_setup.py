@@ -34,7 +34,8 @@ plugin.methods.register_function(
                 "marker_gene_cutoff": Int % Range(1, 10),
                 "mode": Str % Choices(["base.coverage", "insert.raw_counts", "insert.scaled_counts"]),
                 "reference_genomes": Bool,
-                "ncbi_taxonomy": Bool},
+                "ncbi_taxonomy": Bool,
+                "jobs": Int % Range(1, None)},
     name="mOTU paired end profiler",
     description="Executes a taxonomical classification of paired-end sample.",
     citations=[citations["Milanese2019-gw"]],
@@ -48,7 +49,8 @@ plugin.methods.register_function(
                                     "insert.raw_counts measures the number of reads that map to the gene."
                                     "insert.scaled_counts measures the number of reads that map to the gene, scaled by the length of the gene.",
                             "reference_genomes": "Use only species with reference genomes (ref-mOTUs).",
-                            "ncbi_taxonomy": "Use NCBI taxonomy instead of mOTU."},
+                            "ncbi_taxonomy": "Use NCBI taxonomy instead of mOTU.",
+                            "jobs": "The number of jobs to use for the computation. Each job uses n threads from the threads parameter."},
     output_descriptions={"table": "The feature table with counts of marker genes in samples.",
                          "taxonomy": "The taxonomy."}
 )

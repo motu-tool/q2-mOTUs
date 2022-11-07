@@ -1,5 +1,6 @@
 # q2-mOTUs
-This is a QIIME 2 wrapper for [mOTU-tool](https://motu-tool.org/). For details on QIIME 2, see https://qiime2.org. The tool will help you to assign taxonomy to your metagenomic samples
+This is a QIIME 2 wrapper for [mOTU-tool](https://motu-tool.org/). The tool will help you to assign taxonomy to your metagenomic samples. 
+For details on QIIME 2, see https://qiime2.org. 
 
 # Requirements
 - QIIME 2 >= 2022.8 (https://qiime2.org/)
@@ -40,7 +41,7 @@ qiime motus profile \
 2. `taxonomy` - `FeatureData[Taxonomy]` -  A full taxonomy for each of the gene marker.
 
 ## 3. Process the results
-Use `qiime2` tools to visualize the results downstream, for example use:
+Because `table` is a `FeatureTable[Frequency]` artifact, QIIME2 offers a lot of possibilities to analyze it. For example, use `feature-table summarize`:
 ```
 qiime feature-table summarize \
     --i-table paired-end-classified.qza \
@@ -50,7 +51,7 @@ To get summary of your feature table.
 
 ![image](example_output/table-summary.png)
 
-Or create a taxa barplot:
+Or create all-time favourite taxa barplot:
 ```
 qiime taxa barplot \
     --i-table paired-end-classified.qza \
@@ -59,6 +60,8 @@ qiime taxa barplot \
 ```
 
 ![image](example_output/taxa-barplot.png)
+
+Or analyze the samples using `Metadata` you have on hand!
 
 # Citation
 If you use this tool, please cite the following paper:

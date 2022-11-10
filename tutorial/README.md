@@ -23,9 +23,10 @@ qiime feature-table summarize \
 
 ## Exploratory analysis 
 
-We will create a PCoA using Bray-Curtis distance metric for our samples to get an overview of samples. First, let's create a DistanceMatrix artifact using `qiime diversity beta` command. 
-
+We will create a PCoA using Bray-Curtis distance metric for our samples to get an overview of samples. 
 ### Creating a distance matrix
+First, let's create a DistanceMatrix artifact using `qiime diversity beta` command. 
+
 ```
 qiime diversity beta --i-table artifacts/motu-table.qza \
 --p-metric braycurtis \

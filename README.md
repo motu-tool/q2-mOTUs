@@ -5,6 +5,13 @@ For details on QIIME 2, see https://qiime2.org.
 # Requirements
 - QIIME 2 >= 2022.8 (https://qiime2.org/)
 - Git
+
+# Known issues
+QIIME2 makes the copy of sampling data to a temporary directory. By default, it's located in the `/tmp/` folder, which may not have enough space to store the data. Please, change the `TMPDIR` variable to the folder with enough space.
+```
+export TMPDIR=/path/to/tmpdir
+```
+
 # Installation
 ## 1. Install QIIME 2
 Follow the instructions on https://docs.qiime2.org/2022.8/install/native/ to install QIIME 2. You will need to install the latest version of QIIME 2 (2022.8 or later).

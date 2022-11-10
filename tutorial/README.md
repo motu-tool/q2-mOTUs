@@ -151,5 +151,5 @@ qiime composition ancom \
 
 # Conclusions
 
-We have demonstrated, that `q2-mOTUs` plugin allows taxonomical profiling of metagenomic sequencing data. Its output is versatile and can be used for robust downstream analysis in QIIME2.
+`q2-mOTUs` plugin allows taxonomical profiling of metagenomic sequencing data. We demonstrated, that its output can be used for robust downstream analysis in QIIME2, thus complementing already existing software.
 

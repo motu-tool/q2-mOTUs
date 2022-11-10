@@ -35,7 +35,7 @@ qiime diversity beta --i-table artifacts/motu-table.qza \
 
 ### Calculating PCoA
 
-Then, lets calculate PCoA using `qiime diversity pcoa` command. 
+Then, let's calculate PCoA using `qiime diversity pcoa` command. 
 
 ```
 qiime diversity pcoa \
@@ -64,8 +64,7 @@ qiime feature-table filter-samples \
 --o-filtered-table artifacts/motu-table-feces.qza
 ```
 
-## Taxnomomy visualization
-
+## Taxnonomy visualization
 Now, we'll create visualizations of out taxonomical profiles using `taxa barplot`.
 
 ```
@@ -118,7 +117,7 @@ qiime diversity beta-group-significance \
 ### Adding pseudocount 
 
 We will see which taxa are differentially abundant between `feces` and `meconium` samples using `ANCOM` method. 
-First, we will collapse our table to species level. 
+First, we will collapse our table to the genus level. 
 
 ```
 qiime taxa collapse \

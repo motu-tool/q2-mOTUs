@@ -111,7 +111,7 @@ def load_table_extract_tax(tab_fp: str, ncbi: bool = False) -> Tuple[pd.DataFram
     else:
         df = df.drop(columns=[taxonomy_col])
     
-    tab = df.dropna(axis=0, thresh=df.shape[1])
+    tab = df.dropna(axis=0, thresh=1)
     tab = tab.fillna(0).T
     tax = tax[tax.index.isin(tab.columns)]
     

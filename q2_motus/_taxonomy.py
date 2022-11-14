@@ -88,12 +88,14 @@ def profile_sample(
 
     return cmd
 
-
-def load_table_extract_tax(tab_fp: str, ncbi: bool = False) -> Tuple[pd.DataFrame, pd.DataFrame]:
-    '''Converts merged mOTU table to feature table and taxonomy'''
+def load_motus_table(tab_fp: str) -> pd.DataFrame:
     df = pd.read_csv(tab_fp, sep='\t', index_col=0, skiprows=2)
+    return df 
+
+
+def extract_table_tax(df: pd.DataFrame, ncbi: bool = False) -> Tuple[pd.DataFrame, pd.DataFrame]:
     df = df.replace({0 : np.nan})
-    df.index = df.index.rename("Feature ID")
+    df.index.name = "Feature ID"
     if ncbi:
         df = df.rename(columns={"NCBI_tax_id" : "Taxon"})
     else:
@@ -159,5 +161,13 @@ def profile(
         _run_command(cmd)
 
         # output merged profiles as feature table
-        tab, tax = load_table_extract_tax(taxatable, ncbi_taxonomy)
+        tab, tax = extract_table_tax(load_motus_table(taxatable), ncbi_taxonomy)
         return tab, tax
+
+
+def import_table(
+    motus_table: pd.DataFrame, 
+    ncbi_taxonomy: bool = False) -> (pd.DataFrame, pd.DataFrame):
+
+    tab, tax = extract_table_tax(motus_table, ncbi=ncbi_taxonomy)
+    return tab, tax

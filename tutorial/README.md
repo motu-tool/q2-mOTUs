@@ -12,6 +12,12 @@ qiime motus profile \
 --o-taxonomy artifacts/motu-taxonomy.qza
 ``` 
 
+## Importing precomputed `mOTUs` tables
+**Attention**: precomupted mOTU table should be generated from full taxonomy `-q` flag and counts `-c` flag profiles. 
+
+``` 
+qiime motus import_table \
+
 Now, we make a summary of the `FeatureTable[Frequency]` artifact `motu-table.qza`. 
 ```
 qiime feature-table summarize \

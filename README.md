@@ -43,6 +43,12 @@ qiime motus profile \
     --p-jobs 2
 ```
 
+## Optionaly, you can import precomputed, merged mOTU profiles
+**Attention**: precomupted mOTU table should be generated from full taxonomy `-q` flag and counts `-c` flag profiles. 
+
+``` 
+qiime motus import_table \
+
 ## Output 
 1. `table` - `FeatureTable[Frequency]` - A table of the counts of gene markers in samples.
 2. `taxonomy` - `FeatureData[Taxonomy]` -  A full taxonomy for each of the gene marker.

@@ -129,3 +129,4 @@ dmypy.json
 .pyre/
 
 q2_motus/tests/data/dev.ipynb
+dev.ipynb

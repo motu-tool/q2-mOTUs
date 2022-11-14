@@ -1,0 +1,41 @@
+
+{% set data = load_setup_py_data() %}
+{% set version = data.get('version') or 'placehold' %}
+
+package:
+  name: q2-motus
+  version: {{ version }}
+
+source:
+  path: ../..
+
+build:
+  script: make install
+
+requirements:
+  host:
+    - python {{ python }}
+    - setuptools
+
+  run:
+    - python {{ python }}
+    - pandas {{ pandas }}
+    - qiime2 {{ qiime2_epoch }}.*
+    - q2-types {{ qiime2_epoch }}.*
+    - bwa
+
+test:
+  requires:
+    - qiime2 >={{ qiime2 }}
+    - q2-types >={{ q2_types }}
+    - pytest
+    - bwa
+
+  imports:
+    - q2_motus
+    - qiime2.plugins.motus
+
+about:
+  home: https://github.com/motu-tool/q2-mOTUs
+  license: BSD-3-Clause
+  license_family: BSD

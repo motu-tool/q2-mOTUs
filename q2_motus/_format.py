@@ -34,8 +34,10 @@ class MotusMergedAbundanceFormat(TextFileFormat):
                         value = int(value)
                     except ValueError:
                         raise ValidationError(
-                            f'Values in table must be int-able. Found: {value}'
-                        )
+                            f'Values in table must be int-able. Found: {value}.'
+                            'Please, rerun motus with the -c flag.'
+                            )
+                        
 
     def _validate_(self, level):
         level_to_n_lines = {'min': 5, 'max': None}

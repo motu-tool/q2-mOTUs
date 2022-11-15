@@ -48,6 +48,10 @@ qiime motus profile \
 
 ``` 
 qiime motus import_table \
+--i-motus-table $TMPDIR/merged.motus \
+--o-table artifacts/motu-table.qza \
+--o-taxonomy artifacts/motu-taxonomy.qza
+```
 
 ## Output 
 1. `table` - `FeatureTable[Frequency]` - A table of the counts of gene markers in samples.

@@ -20,7 +20,7 @@ qiime motus profile \
 ``` 
 qiime motus import-table \
 --i-motus-table $TMPDIR/merged.motus \
---o-table artifacts/motu-table.qza
+--o-table artifacts/motu-table.qza \
 --o-taxonomy artifacts/motu-taxonomy.qza
 ```
 

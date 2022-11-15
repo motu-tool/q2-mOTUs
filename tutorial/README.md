@@ -1,6 +1,6 @@
 In this tutorial, we would like to demonstrate how the `q2-mOTUs` fits into the QIIME 2 framework. We will use the study `PRJEB52147` and its metadata from Qiita `ID 13241`. The article is published in [Scientific Reports](https://www.nature.com/articles/s41598-022-10276-y).
 
-First, we import the quality-controlled metagenomic sequencing data similarly as we do it for test data using `Manifest` file and `qiime tools import`. An example might be found in [paired](https://github.com/motu-tool/q2-mOTUs/tree/main/q2_motus/tests/data/paired) folder. Artifact was not uploaded to GitHub due to a large filesize. 
+First, we import the **quality-controlled metagenomic** sequencing data similarly as we do it for test data using `Manifest` file and `qiime tools import`. An example might be found in [paired](https://github.com/motu-tool/q2-mOTUs/tree/main/q2_motus/tests/data/paired) folder. Artifact was not uploaded to GitHub due to a large filesize. 
 
 ## Profiling metagenomic samples
 
@@ -13,10 +13,16 @@ qiime motus profile \
 ``` 
 
 ## Importing precomputed `mOTUs` tables
-**Attention**: precomupted mOTU table should be generated from full taxonomy `-q` flag and counts `-c` flag profiles. 
+**Attention**: precomupted mOTU table should be generated from full taxonomy `-q` flag and counts `-c` flag profiles.
 
 ``` 
-qiime motus import_table \
+qiime motus import-table \
+--i-motus-table $TMPDIR/merged.motus \
+--o-table artifacts/motu-table.qza
+--o-taxonomy artifacts/motu-taxonomy.qza
+```
+
+```
 
 Now, we make a summary of the `FeatureTable[Frequency]` artifact `motu-table.qza`. 
 ```

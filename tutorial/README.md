@@ -22,8 +22,6 @@ qiime motus import-table \
 --o-taxonomy artifacts/motu-taxonomy.qza
 ```
 
-```
-
 Now, we make a summary of the `FeatureTable[Frequency]` artifact `motu-table.qza`. 
 ```
 qiime feature-table summarize \

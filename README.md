@@ -83,21 +83,20 @@ Or analyze the samples using `Metadata` you have on hand!
 # Citation
 If you use this tool, please cite the following paper:
 ```
-@article{Milanese2019-gw,
-  title     = {Microbial abundance, activity and population genomic profiling
-               with mOTUs2},
-  author    = {Milanese, Alessio and Mende, Daniel R and Paoli, Lucas and
-               Salazar, Guillem and Ruscheweyh, Hans-Joachim and Cuenca,
-               Miguelangel and Hingamp, Pascal and Alves, Renato and Costea,
-               Paul I and Coelho, Luis Pedro and Schmidt, Thomas S B and
-               Almeida, Alexandre and Mitchell, Alex L and Finn, Robert D and
-               Huerta-Cepas, Jaime and Bork, Peer and Zeller, Georg and
-               Sunagawa, Shinichi},
-  journal   = {Nat. Commun.},
-  publisher = {Springer Science and Business Media LLC},
-  volume    = {10},
-  number    = {1},
-  pages     = {1014},
-  month     = {mar},
-  year      = {2019},
+@article{Ruscheweyh2022,
+  doi = {10.1186/s40168-022-01410-z},
+  url = {https://doi.org/10.1186/s40168-022-01410-z},
+  year = {2022},
+  month = dec,
+  publisher = {Springer Science and Business Media {LLC}},
+  volume = {10},
+  number = {1},
+  author = {Hans-Joachim Ruscheweyh and Alessio Milanese and Lucas Paoli and 
+            Nicolai Karcher and Quentin Clayssen and Marisa Isabell Keller and 
+            Jakob Wirbel and Peer Bork and Daniel R. Mende and Georg Zeller and 
+            Shinichi Sunagawa},
+  title = {Cultivation-independent genomes greatly expand taxonomic-profiling 
+           capabilities of {mOTUs} across various environments},
+  journal = {Microbiome}
 }
+```

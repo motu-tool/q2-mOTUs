@@ -31,7 +31,7 @@ make install
 
 The plugin executes one function - assigns taxonomy to metagenomic reads. Therefore, there is a single workflow.
 ## 1. Import your data to QIIME 2
-Import your metagenomic sequencing data in `.fastq` format (don't forget to preprocess your data) to QIIME2 as a `SampleData` semantic type using manifest file. See examples in `q2_motus/test/data`.
+Import your metagenomic sequencing data in `.fastq` format (don't forget to preprocess your data) to QIIME2 as a `SampleData` semantic type using manifest file. See examples in [`q2_motus/tests/data`](https://github.com/motu-tool/q2-mOTUs/tree/main/q2_motus/tests/data).
 ## 2. Run mOTU-tool
 Whether you have a single sample or multiple samples, you can run mOTU-tool using the following command:
 ```

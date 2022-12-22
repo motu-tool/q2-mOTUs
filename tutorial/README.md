@@ -2,7 +2,7 @@ In this tutorial, we would like to demonstrate how the `q2-mOTUs` fits into the 
 
 # Importing data
 
-First, we import the **quality-controlled metagenomic** sequencing data similarly as we do it for test data using `Manifest` file and `qiime tools import`. An example might be found in [paired](https://github.com/motu-tool/q2-mOTUs/tree/main/q2_motus/tests/data/paired) folder. Artifact was not uploaded to GitHub due to a large filesize. 
+First, we import the **quality-controlled metagenomic** sequencing data similarly as we do it for test data using `Manifest` file and `qiime tools import`. An example might be found in [`q2_motus/tests/data/paired`](https://github.com/motu-tool/q2-mOTUs/tree/main/q2_motus/tests/data/paired) folder. Artifact was not uploaded to GitHub due to a large filesize. 
 
 ## Profiling metagenomic samples
 

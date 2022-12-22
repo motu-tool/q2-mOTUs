@@ -47,7 +47,7 @@ qiime motus profile \
 **Attention**: precomupted mOTU table should be generated from full taxonomy `-q` flag and counts `-c` flag profiles. 
 
 ``` 
-qiime motus import_table \
+qiime motus import-table \
 --i-motus-table $TMPDIR/merged.motus \
 --o-table artifacts/motu-table.qza \
 --o-taxonomy artifacts/motu-taxonomy.qza

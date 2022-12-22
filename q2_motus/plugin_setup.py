@@ -18,7 +18,7 @@ plugin = Plugin(
     version=q2_motus.__version__,
     website="https://github.com/motu-tool/q2-motus",
     package='q2_motus',
-    citations=[citations["Milanese2019-gw"]],
+    citations=[citations["Ruscheweyh2022"]],
     description=('This QIIME 2 plugin allows taxonomical profiling of '
                  'metagenomic samples using mOTU tool.'),
     short_description='Taxonomical profiling of metagenomic samples using mOTU.'
@@ -59,7 +59,7 @@ plugin.methods.register_function(
                 "jobs": Int % Range(1, None)},
     name="mOTU profiler",
     description="Executes a taxonomical classification of a sample.",
-    citations=[citations["Milanese2019-gw"]],
+    citations=[citations["Ruscheweyh2022"]],
     input_descriptions={"samples": "Samples for profiling."},
     parameter_descriptions={"threads": "The number of threads to use. We suggest using 4-8 threads.",
                             "min_alen": "Minimum alignment length.",
@@ -87,7 +87,7 @@ plugin.methods.register_function(
     parameters={"ncbi_taxonomy": Bool},
     name="mOTU table importer",
     description="Imports precomputed mOTU table to QIIME2.",
-    citations=[citations["Milanese2019-gw"]],
+    citations=[citations["Ruscheweyh2022"]],
     input_descriptions={"motus_table": "The path to a precomputed merged mOTU table."},
     parameter_descriptions={"ncbi_taxonomy": "Use NCBI taxonomy instead of mOTU."},
     output_descriptions={"table": "The feature table with counts of marker genes in samples.",

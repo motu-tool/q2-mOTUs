@@ -18,7 +18,7 @@ install:
 	if ! which bwa > /dev/null; then git clone https://github.com/lh3/bwa.git && cd bwa && make && ln -s $(PWD)/bwa/bwa $(CONDA_PREFIX)/bin; fi
 
 	motus downloadDB
-	$(PYTHON) setup.py install
+	$(PYTHON) setup.py install --user
 
 dev: all
 	pip install -e .

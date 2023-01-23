@@ -1,3 +1,8 @@
+taxonomy.tsv
+taxonomy_new.csv
+out.txt
+motus_taxonomy_map.tsv
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

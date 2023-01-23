@@ -1,13 +1,17 @@
 # q2-mOTUs
-This is a QIIME 2 wrapper for [mOTU-tool](https://motu-tool.org/). The tool will help you to assign taxonomy to your metagenomic samples. 
-For details on QIIME 2, see https://qiime2.org. 
+This is a QIIME 2 wrapper for [mOTU-tool](https://motu-tool.org/). The tool will help you to assign taxonomy to your metagenomic samples.
+For details on QIIME 2, see https://qiime2.org.
+
+# Principal concept
+`mOTU` is an attempt to build a taxonomy utilizing genomic information about organisms formalized with the help of differences in 40 universal gene markers (40 MGs) sequences. The basic unit of taxonomical profile is an
+`mOTU`, and thus is used in the output. It is different from classical taxa and may encompass one, few or no species. A detailed map of relationship between `mOTUs` and standard taxonomical units is located in [`data/motus_taxonomy_map.tsv`](https://github.com/motu-tool/q2-mOTUs/tree/main/data/motus_taxonomy_map.tsv)
 
 # Requirements
 - QIIME 2 >= 2022.8 (https://qiime2.org/)
 - Git
 
 # Known issues
-QIIME2 makes the copy of sampling data to a temporary directory. By default, it's located in the `/tmp/` folder, which may not have enough space to store the data. Please, change the `TMPDIR` variable to the folder with enough space.
+QIIME2 makes the copy of data to a temporary directory. By default, it's located in the `/tmp` folder, which may not have enough space to store the data. Please, change the `TMPDIR` variable to the folder with enough space during data import.
 ```
 export TMPDIR=/path/to/tmpdir
 ```
@@ -36,7 +40,7 @@ Import your metagenomic sequencing data in `.fastq` format (don't forget to prep
 Whether you have a single sample or multiple samples, you can run mOTU-tool using the following command:
 ```
 qiime motus profile \
-    --i-samples paired-end.qza \
+    --i-samples q2_motus/tests/data/paired-end.qza \
     --o-taxonomy paired-end-taxonomy.qza \
     --o-table paired-end-classified.qza \
     --p-threads 4 \
@@ -44,16 +48,16 @@ qiime motus profile \
 ```
 
 ## Optionaly, you can import precomputed, merged mOTU profiles
-**Attention**: precomupted mOTU table should be generated from full taxonomy `-q` flag and counts `-c` flag profiles. 
+**Attention**: precomupted mOTU table should be generated from full taxonomy `-q` flag and counts `-c` flag profiles.
 
-``` 
+```
 qiime motus import-table \
 --i-motus-table $TMPDIR/merged.motus \
 --o-table artifacts/motu-table.qza \
 --o-taxonomy artifacts/motu-taxonomy.qza
 ```
 
-## Output 
+## Output
 1. `table` - `FeatureTable[Frequency]` - A table of the counts of gene markers in samples.
 2. `taxonomy` - `FeatureData[Taxonomy]` -  A full taxonomy for each of the gene marker.
 
@@ -80,6 +84,18 @@ qiime taxa barplot \
 
 Or analyze the samples using `Metadata` you have on hand!
 
+## Parameters
+Due to a QIIME2 naming convention, parameter names in plugin and standalone version are different. The table summarizes differences.
+| Q2-mOTUs parameter        | mOTU parameter | Description |
+|---------------------------|----------------|-------------|
+| `--p-min-alen`            | `-l`           | Minimum length of the alignment. |
+| `--p-marker-gene-cutoff`  | `-g`           | Minimum number of marker genes to be considered a species.  Ranges from 1 to 10. A higher value increases precision (and lowers recall).|
+| `--p-mode`                | `-y`           | The mode to use for abundance estimation. `base.coverage` measures the average base coverage of the gene. `insert.raw_counts` measures the number of reads that map to the gene. `insert.scaled_counts` measures the number of reads that map to the gene, scaled by the length of the gene. |
+| `--p-reference-genomes`/  `--p-no-reference-genomes`| `-e`           | Only use species with reference genomes (ref-mOTUs).  |
+| `--p-ncbi-taxonomy` / `--p-no-ncbi-taxonomy`    | `-p`           | Use NCBI taxonomy identifiers. |
+| `--p-threads`             | `-t`           | Number of threads to use. |
+| `--p-jobs`                | `-j`           | Number of jobs to run in parallel. |
+
 # Citation
 If you use this tool, please cite the following paper:
 ```
@@ -91,11 +107,11 @@ If you use this tool, please cite the following paper:
   publisher = {Springer Science and Business Media {LLC}},
   volume = {10},
   number = {1},
-  author = {Hans-Joachim Ruscheweyh and Alessio Milanese and Lucas Paoli and 
-            Nicolai Karcher and Quentin Clayssen and Marisa Isabell Keller and 
-            Jakob Wirbel and Peer Bork and Daniel R. Mende and Georg Zeller and 
+  author = {Hans-Joachim Ruscheweyh and Alessio Milanese and Lucas Paoli and
+            Nicolai Karcher and Quentin Clayssen and Marisa Isabell Keller and
+            Jakob Wirbel and Peer Bork and Daniel R. Mende and Georg Zeller and
             Shinichi Sunagawa},
-  title = {Cultivation-independent genomes greatly expand taxonomic-profiling 
+  title = {Cultivation-independent genomes greatly expand taxonomic-profiling
            capabilities of {mOTUs} across various environments},
   journal = {Microbiome}
 }

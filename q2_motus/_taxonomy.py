@@ -1,35 +1,20 @@
 import os
-import subprocess
 import tempfile
 from functools import partial
 from multiprocessing import Pool
 from typing import List, Literal, NamedTuple, Tuple, Union
 
-import numpy as np
 import pandas as pd
 from q2_types.per_sample_sequences import (
     SingleLanePerSamplePairedEndFastqDirFmt,
     SingleLanePerSampleSingleEndFastqDirFmt)
 
-
-def _run_command(cmd: List[str], verbose: bool = False) -> None:
-    """Run a command in a subprocess.
-
-    Parameters
-    ----------
-    cmd : str
-        The command to run.
-    verbose : bool, optional
-        Whether to print the command before running it, by default False.
-
-    Raises
-    ------
-    subprocess.CalledProcessError
-        If the command returns a non-zero exit status.
-    """
-    if verbose:
-        print(cmd)
-    subprocess.call(cmd)
+from ._utils import (
+    _run_command,
+    reformat_taxonomy,
+    load_motus_table,
+    extract_table_tax,
+)
 
 
 def preprocess_manifest(data: Union[SingleLanePerSampleSingleEndFastqDirFmt,
@@ -89,38 +74,6 @@ def profile_sample(
     return cmd
 
 
-def load_motus_table(tab_fp: str) -> pd.DataFrame:
-    df = pd.read_csv(tab_fp, sep='\t', index_col=0, skiprows=2)
-    return df
-
-
-def extract_table_tax(df: pd.DataFrame, ncbi: bool = False) -> Tuple[pd.DataFrame, pd.DataFrame]:
-    df = df.replace({0 : np.nan})
-    df.index.name = "Feature ID"
-    if ncbi:
-        df = df.rename(columns={"NCBI_tax_id" : "Taxon"})
-    else:
-        df = df.rename(columns={"consensus_taxonomy": "Taxon"})
-
-    id_col = "Feature ID"
-    taxonomy_col = "Taxon"
-
-    # getting taxonomy
-    tax = df.reset_index()[[id_col, taxonomy_col]].copy().set_index(id_col)
-    tax[taxonomy_col] = tax[taxonomy_col].str.replace("|", "; ", regex=True)
-
-    if ncbi:
-        df = df.drop(columns = [taxonomy_col, "consensus_taxonomy"])
-    else:
-        df = df.drop(columns=[taxonomy_col])
-
-    tab = df.dropna(axis=0, thresh=1)
-    tab = tab.fillna(0).T
-    tax = tax[tax.index.isin(tab.columns)]
-
-    return tab, tax
-
-
 def profile(
     samples: Union[SingleLanePerSamplePairedEndFastqDirFmt,
                    SingleLanePerSampleSingleEndFastqDirFmt],
@@ -148,6 +101,7 @@ def profile(
     with tempfile.TemporaryDirectory() as temp_dir:
         profile_dir = os.path.join(temp_dir, "profiles")
         os.makedirs(profile_dir, exist_ok=True)
+
         reads_tuples = id_to_fps.itertuples(name=None)
         func = partial(profile_sample, output_directory=profile_dir, threads=threads,
                        min_alen=min_alen, marker_gene_cutoff=marker_gene_cutoff, mode=mode,
@@ -163,6 +117,9 @@ def profile(
 
         # output merged profiles as feature table
         tab, tax = extract_table_tax(load_motus_table(taxatable), ncbi_taxonomy)
+
+        tax = reformat_taxonomy(tax, ref_col_name="Feature ID", tax_col_name="Taxon")
+
         return tab, tax
 
 
@@ -171,4 +128,5 @@ def import_table(
     ncbi_taxonomy: bool = False) -> (pd.DataFrame, pd.DataFrame):
 
     tab, tax = extract_table_tax(motus_table, ncbi=ncbi_taxonomy)
+    tax = reformat_taxonomy(tax, ref_col_name="Feature ID", tax_col_name="Taxon", sep=";")
     return tab, tax

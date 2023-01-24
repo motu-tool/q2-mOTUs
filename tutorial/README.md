@@ -2,29 +2,31 @@ In this tutorial, we would like to demonstrate how the `q2-mOTUs` fits into the 
 
 # Importing data
 
-First, we import the **quality-controlled metagenomic** sequencing data similarly as we do it for test data using `Manifest` file and `qiime tools import`. An example might be found in [`q2_motus/tests/data/paired`](https://github.com/motu-tool/q2-mOTUs/tree/main/q2_motus/tests/data/paired) folder. Artifact was not uploaded to GitHub due to a large filesize. 
+First, we import the **quality-controlled metagenomic** sequencing data similarly as we do it for test data using `Manifest` file and `qiime tools import`. An example might be found in [`q2_motus/tests/data/paired`](https://github.com/motu-tool/q2-mOTUs/tree/main/q2_motus/tests/data/paired) folder. Artifact was not uploaded to GitHub due to a large filesize.
 
 ## Profiling metagenomic samples
 
 ```
 qiime motus profile \
---i-samples $TMPDIR/study-seqs.qza \
+--i-samples artifacts/study-seqs.qza \
 --p-threads 8 \
 --o-table artifacts/motu-table.qza \
 --o-taxonomy artifacts/motu-taxonomy.qza
-``` 
+```
 
 ## Importing precomputed `mOTUs` tables
 **Attention**: precomupted mOTU table should be generated from full taxonomy `-q` flag and counts `-c` flag profiles.
 
-``` 
+```
 qiime motus import-table \
 --i-motus-table $TMPDIR/merged.motus \
 --o-table artifacts/motu-table.qza \
 --o-taxonomy artifacts/motu-taxonomy.qza
 ```
 
-Now, we make a summary of the `FeatureTable[Frequency]` artifact `motu-table.qza`. 
+## Exploratory analysis
+
+Now, we make a summary of the `FeatureTable[Frequency]` artifact `motu-table.qza`.
 ```
 qiime feature-table summarize \
 --i-table artifacts/motu-table.qza \
@@ -33,11 +35,10 @@ qiime feature-table summarize \
 
 [motu-table-summary.qzv](https://view.qiime2.org/visualization/?type=html&src=https%3A%2F%2Fdl.dropbox.com%2Fs%2Fvsedg96hb6uayjw%2Fmotu-table-summary.qzv%3Fdl%3D1)
 
-## Exploratory analysis 
-
-We will create a PCoA using Bray-Curtis distance metric for our samples to get an overview of samples. 
+.
 ### Creating a distance matrix
-First, let's create a DistanceMatrix artifact using `qiime diversity beta` command. 
+We will create a PCoA using Bray-Curtis distance metric for our samples to get an overview of samples
+First, let's create a DistanceMatrix artifact using `qiime diversity beta` command.
 
 ```
 qiime diversity beta --i-table artifacts/motu-table.qza \
@@ -47,7 +48,7 @@ qiime diversity beta --i-table artifacts/motu-table.qza \
 
 ### Calculating PCoA
 
-Then, let's calculate PCoA using `qiime diversity pcoa` command. 
+Then, let's calculate PCoA using `qiime diversity pcoa` command.
 
 ```
 qiime diversity pcoa \
@@ -56,18 +57,18 @@ qiime diversity pcoa \
 ```
 
 ### Visualizing results
-And visualize results using `Emperor`. 
+And visualize results using `Emperor`.
 
 ```
 qiime emperor plot --i-pcoa artifacts/bc-pcoa.qza \
---m-metadata-file artifacts/metadata.tsv \
+--m-metadata-file artifacts/PRJEB52147_metadata.qza \
 --o-visualization visualizations/bc-emperor.qzv
 ```
 
 [bc-emperor.qzv](https://view.qiime2.org/visualization/?type=html&src=https%3A%2F%2Fdl.dropbox.com%2Fs%2F7tsb7mrhfxq1ztf%2Fbc-emperor.qzv%3Fdl%3D1)
 
-We might see, that different sample types cluster together. We will filter only samples for `feces`. 
-    
+We might see, that different sample types cluster together. We will filter only samples for `feces`.
+
 ```
 qiime feature-table filter-samples \
 --i-table artifacts/motu-table.qza \
@@ -90,7 +91,7 @@ qiime taxa barplot \
 [motu-taxa-barplot-feces.qzv](https://view.qiime2.org/visualization/?type=html&src=https%3A%2F%2Fdl.dropbox.com%2Fs%2Frtz0klfpvbsxsfj%2Fmotu-taxa-barplot-feces.qzv%3Fdl%3D1)
 
 
-Then, we'll make a Krona plot, which allows us an interactive exploration of the taxonomic composition of samples.  
+Then, we'll make a Krona plot, which allows us an interactive exploration of the taxonomic composition of samples.
 
 ```
 qiime krona collapse-and-plot \
@@ -102,9 +103,9 @@ qiime krona collapse-and-plot \
 [motu-krona-feces.qzv](https://view.qiime2.org/visualization/?type=html&src=https%3A%2F%2Fdl.dropbox.com%2Fs%2F51kurmw326jxjie%2Fmotu-krona-feces.qzv%3Fdl%3D1)
 
 
-## Hypothesis testing 
+## Hypothesis testing
 
-We will test if maternal asthma has a significant influence on fecal microbiome composition using Bray-Curtis distance metric. 
+We will test if maternal asthma has a significant influence on fecal microbiome composition using Bray-Curtis distance metric.
 ### Creating a distance matrix
 
 ```
@@ -119,17 +120,17 @@ qiime diversity beta-group-significance \
 --i-distance-matrix artifacts/bc-distances-feces.qza \
 --m-metadata-file artifacts/PRJEB52147_metadata.qza \
 --m-metadata-column diagnosis \
---o-visualization visualizations/bc-distances-feces-disagnosis.qzv
+--o-visualization visualizations/bc-distances-feces-diagnosis.qzv
 ```
 
 [bc-distances-feces-diagnosis.qzv](https://view.qiime2.org/visualization/?type=html&src=https%3A%2F%2Fdl.dropbox.com%2Fs%2F455at5yxx7accvy%2Fbc-distances-feces-diagnosis.qzv%3Fdl%3D1)
 
 ## Differential abundance testing
 
-### Adding pseudocount 
+### Adding pseudocount
 
-We will see which taxa are differentially abundant between `feces` and `meconium` samples using `ANCOM` method. 
-First, we will collapse our table to the genus level. 
+We will see which taxa are differentially abundant between `feces` and `meconium` samples using `ANCOM` method.
+First, we will collapse our table to the genus level.
 
 ```
 qiime taxa collapse \
@@ -139,7 +140,7 @@ qiime taxa collapse \
 --o-collapsed-table artifacts/motu-table-genus.qza
 ```
 
-ANCOM is a compositional data analysis method, that cannot work with zeros. We will add a pseudocount of 1 and create a `FeatureTable[Composition]` artifact. 
+ANCOM is a compositional data analysis method, that cannot work with zeros. We will add a pseudocount of 1 and create a `FeatureTable[Composition]` artifact.
 
 ```
 qiime composition add-pseudocount \
@@ -149,7 +150,7 @@ qiime composition add-pseudocount \
 ```
 ### Conducting a test
 
-Then, we will run `ANCOM` using `qiime composition ancom` command. 
+Then, we will run `ANCOM` using `qiime composition ancom` command.
 
 ```
 qiime composition ancom \

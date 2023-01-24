@@ -1,7 +1,5 @@
-taxonomy.tsv
-taxonomy_new.csv
-out.txt
-motus_taxonomy_map.tsv
+.vscode
+tutorial/artifacts/study-seqs.qza
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

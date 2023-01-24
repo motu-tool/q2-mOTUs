@@ -35,7 +35,6 @@ qiime feature-table summarize \
 
 [motu-table-summary.qzv](https://view.qiime2.org/visualization/?type=html&src=https%3A%2F%2Fdl.dropbox.com%2Fs%2Fvsedg96hb6uayjw%2Fmotu-table-summary.qzv%3Fdl%3D1)
 
-.
 ### Creating a distance matrix
 We will create a PCoA using Bray-Curtis distance metric for our samples to get an overview of samples
 First, let's create a DistanceMatrix artifact using `qiime diversity beta` command.
@@ -130,23 +129,23 @@ qiime diversity beta-group-significance \
 ### Adding pseudocount
 
 We will see which taxa are differentially abundant between `feces` and `meconium` samples using `ANCOM` method.
-First, we will collapse our table to the genus level.
+First, we will collapse our table to the mOTUs level. We do not advise usage of mOTUs on any other taxonomical level, as this is a separate concept and taxonomy is only an approximation of the relationship between mOTUs and classical taxonomy.
 
 ```
 qiime taxa collapse \
 --i-table artifacts/motu-table.qza \
 --i-taxonomy artifacts/motu-taxonomy.qza \
---p-level 6 \
---o-collapsed-table artifacts/motu-table-genus.qza
+--p-level 7 \
+--o-collapsed-table artifacts/motu-table-motus.qza
 ```
 
 ANCOM is a compositional data analysis method, that cannot work with zeros. We will add a pseudocount of 1 and create a `FeatureTable[Composition]` artifact.
 
 ```
 qiime composition add-pseudocount \
---i-table artifacts/motu-table-genus.qza \
+--i-table artifacts/motu-table-motus.qza \
 --p-pseudocount 1 \
---o-composition-table artifacts/motu-table-genus-ancom.qza
+--o-composition-table artifacts/motu-table-motus-ancom.qza
 ```
 ### Conducting a test
 

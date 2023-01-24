@@ -68,11 +68,11 @@ qiime feature-table summarize \
     --i-table paired-end-classified.qza \
     --o-visualization paired-end-classified.qzv
 ```
-To get summary of your feature table.
+To get [summary](https://view.qiime2.org/visualization/?type=html&src=https%3A%2F%2Fdl.dropbox.com%2Fs%2Fxp6943zk9mvzu72%2Fpaired-end-classified.qzv%3Fdl%3D1) of your feature table.
 
 ![image](example_output/table-summary.png)
 
-Or create all-time favourite taxa barplot:
+Or create all-time favourite [taxa barplot](https://view.qiime2.org/visualization/?type=html&src=https%3A%2F%2Fdl.dropbox.com%2Fs%2Fe1nbhx48urmwk48%2Fpaired-end-taxa-barplot.qzv%3Fdl%3D1):
 ```
 qiime taxa barplot \
     --i-table paired-end-classified.qza \

@@ -89,7 +89,7 @@ def load_motus_table(tab_fp: str) -> pd.DataFrame:
     return df
 
 
-def extract_table_tax(df: pd.DataFrame, ncbi: bool = False) -> Tuple[pd.DataFrame, pd.DataFrame]:
+def extract_table_tax(df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
     """
     Extract taxonomy and table from mOTUs table for QIIME2.
 
@@ -97,16 +97,11 @@ def extract_table_tax(df: pd.DataFrame, ncbi: bool = False) -> Tuple[pd.DataFram
     ----------
     df : pd.DataFrame
         mOTUs table.
-    ncbi : bool, optional
-        Whether the table was generated using NCBI taxonomy, by default False.
     """
 
     df = df.replace({0 : np.nan})
     df.index.name = "Feature ID"
-    if ncbi:
-        df = df.rename(columns={"NCBI_tax_id" : "Taxon"})
-    else:
-        df = df.rename(columns={"consensus_taxonomy": "Taxon"})
+    df = df.rename(columns={"consensus_taxonomy": "Taxon"})
 
     id_col = "Feature ID"
     taxonomy_col = "Taxon"
@@ -115,10 +110,7 @@ def extract_table_tax(df: pd.DataFrame, ncbi: bool = False) -> Tuple[pd.DataFram
     tax = df.reset_index()[[id_col, taxonomy_col]].copy().set_index(id_col)
     tax[taxonomy_col] = tax[taxonomy_col].str.replace("|", "; ", regex=True)
 
-    if ncbi:
-        df = df.drop(columns = [taxonomy_col, "consensus_taxonomy"])
-    else:
-        df = df.drop(columns=[taxonomy_col])
+    df = df.drop(columns=[taxonomy_col])
 
     tab = df.dropna(axis=0, thresh=1)
     tab = tab.fillna(0).T

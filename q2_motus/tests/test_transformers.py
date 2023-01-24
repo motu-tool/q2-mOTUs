@@ -30,7 +30,7 @@ class TestMotusFormatTransformers(TestPluginBase):
 
         _, obs = self.transform_format(
             MotusMergedAbundanceFormat, pd.DataFrame, filename="expected/paired-end.motus")
-        
-        obs_tab, obs_tax = extract_table_tax(obs, ncbi=False)
+
+        obs_tab, obs_tax = extract_table_tax(obs)
 
         assert_frame_equal(obs_tab, exp)

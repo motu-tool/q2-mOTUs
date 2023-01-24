@@ -92,7 +92,6 @@ Due to a QIIME2 naming convention, parameter names in plugin and standalone vers
 | `--p-marker-gene-cutoff`  | `-g`           | Minimum number of marker genes to be considered a species.  Ranges from 1 to 10. A higher value increases precision (and lowers recall).|
 | `--p-mode`                | `-y`           | The mode to use for abundance estimation. `base.coverage` measures the average base coverage of the gene. `insert.raw_counts` measures the number of reads that map to the gene. `insert.scaled_counts` measures the number of reads that map to the gene, scaled by the length of the gene. |
 | `--p-reference-genomes`/  `--p-no-reference-genomes`| `-e`           | Only use species with reference genomes (ref-mOTUs).  |
-| `--p-ncbi-taxonomy` / `--p-no-ncbi-taxonomy`    | `-p`           | Use NCBI taxonomy identifiers. |
 | `--p-threads`             | `-t`           | Number of threads to use. |
 | `--p-jobs`                | `-j`           | Number of jobs to run in parallel. |
 

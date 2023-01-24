@@ -38,8 +38,7 @@ def profile_sample(
     min_alen: int = 75,
     marker_gene_cutoff: int = 3,
     mode: Literal["base.coverage", "insert.raw_counts", "insert.scaled_counts"] = "insert.scaled_counts",
-    reference_genomes: bool = False,
-    ncbi_taxonomy: bool = False) -> List[str]:
+    reference_genomes: bool = False) -> List[str]:
 
     """Run motu-profiler on a single sample."""
 
@@ -66,9 +65,6 @@ def profile_sample(
     if reference_genomes:
         cmd.extend(["-e"])
 
-    if ncbi_taxonomy:
-        cmd.extend(["-p"])
-
     p = _run_command(cmd)
 
     return cmd
@@ -82,7 +78,6 @@ def profile(
     marker_gene_cutoff: int = 3,
     mode: Literal["base.coverage", "insert.raw_counts", "insert.scaled_counts"] = "insert.scaled_counts",
     reference_genomes: bool = False,
-    ncbi_taxonomy: bool = False,
     jobs: int = 1
     ) -> (pd.DataFrame, pd.DataFrame):
     """Run motu-profiler on paired-end samples data.
@@ -105,7 +100,7 @@ def profile(
         reads_tuples = id_to_fps.itertuples(name=None)
         func = partial(profile_sample, output_directory=profile_dir, threads=threads,
                        min_alen=min_alen, marker_gene_cutoff=marker_gene_cutoff, mode=mode,
-                       reference_genomes=reference_genomes, ncbi_taxonomy=ncbi_taxonomy)
+                       reference_genomes=reference_genomes)
 
         with Pool(jobs) as pool:
             pool.map(func, reads_tuples)
@@ -116,7 +111,7 @@ def profile(
         _run_command(cmd)
 
         # output merged profiles as feature table
-        tab, tax = extract_table_tax(load_motus_table(taxatable), ncbi_taxonomy)
+        tab, tax = extract_table_tax(load_motus_table(taxatable))
 
         tax = reformat_taxonomy(tax, ref_col_name="Feature ID", tax_col_name="Taxon")
 
@@ -124,9 +119,8 @@ def profile(
 
 
 def import_table(
-    motus_table: pd.DataFrame,
-    ncbi_taxonomy: bool = False) -> (pd.DataFrame, pd.DataFrame):
+    motus_table: pd.DataFrame) -> (pd.DataFrame, pd.DataFrame):
 
-    tab, tax = extract_table_tax(motus_table, ncbi=ncbi_taxonomy)
+    tab, tax = extract_table_tax(motus_table)
     tax = reformat_taxonomy(tax, ref_col_name="Feature ID", tax_col_name="Taxon", sep=";")
     return tab, tax

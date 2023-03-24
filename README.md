@@ -25,10 +25,24 @@ Activate the QIIME 2 environment by running the following command:
 conda activate qiime2-2022.8
 ```
 ## 3. Install mOTU-tool
+
+Make sure to start by installing [mamba](https://mamba.readthedocs.io/en/latest/index.html) in your QIIME2 environment. This will help to solve dependency conflicts faster:
 ```
-git clone https://github.com/motu-tool/q2-mOTUs
-cd q2-mOTUs
-make install
+conda activate qiime2-2022.8
+conda install mamba -c conda-forge
+```
+
+Next, install q2-mOTUs
+```
+mamba install -c bioconda -c conda-forge -c valentynbez q2-motus
+```
+Fetch mOTUs database.
+```
+motus downloadDB
+```
+Test the installation.
+```
+qiime motus --help
 ```
 
 # Usage

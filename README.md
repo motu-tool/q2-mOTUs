@@ -34,14 +34,13 @@ conda install mamba -c conda-forge
 
 Next, install q2-mOTUs
 ```
-mamba install -c bioconda -c conda-forge -c valentynbez q2-motus
+git clone https://github.com/motu-tool/q2-mOTUs
+cd q2-mOTUs
+make install
 ```
-Fetch mOTUs database.
+Test the installation
 ```
-motus downloadDB
-```
-Test the installation.
-```
+qiime dev refresh-cache
 qiime motus --help
 ```
 

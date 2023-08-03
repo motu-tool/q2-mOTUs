@@ -62,8 +62,8 @@ qiime motus profile \
 ### Optimal combination threads and jobs
 `q2-mOTUs` runs multiple instances of `motu profile` command from original software, which aligns reads to the reference using `bwa mem`. Alignment step execution time scales effectively (linearly) for up to 8 threads per job. The amount of jobs you can deploy is amount of CPUs available divided by number of threads used for a single job.
 
-## Optionaly, you can import precomputed, merged mOTU profiles
-**Attention**: precomupted mOTU table should be generated from full taxonomy `-q` flag and counts `-c` flag profiles.
+## Optionally, you can import precomputed, merged mOTU profiles
+**Attention**: precomputed mOTU table should be generated from full taxonomy `-q` flag and counts `-c` flag profiles.
 
 ```
 qiime motus import-table \
